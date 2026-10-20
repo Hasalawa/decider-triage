@@ -1,0 +1,51 @@
+name: Real Decider benchmark
+
+# Runs the triage benchmark against the REAL Strands Decider 2B on CPU.
+# Slow (downloads ~4 GB of weights and installs torch), so it is manual + weekly only.
+# The numbers it prints are the ones to quote in the article, not the stub's.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-strands-decider-2b-hobson-v19
+      - name: Install
+        run: |
+          pip install -e ".[dev]"
+          pip install strands-decider
+      - name: Serve the real decider (CPU)
+        run: |
+          nohup strands-decider serve StrandsAgents/strands-decider-2B-hobson-v19 \
+            --port 8099 --device cpu > decider.log 2>&1 &
+          for i in $(seq 1 180); do curl -sf localhost:8099/health && exit 0; sleep 5; done
+          echo "decider did not start"; tail -50 decider.log; exit 1
+      - name: Benchmark
+        run: triage-bench --json | tee bench.json
+      - name: Job summary
+        run: |
+          echo '### Real Decider 2B benchmark (CPU runner, slower than GPU)' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat bench.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: real-decider-bench
+          path: |
+            bench.json
+            decider.log

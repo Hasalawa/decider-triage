@@ -1,0 +1,38 @@
+name: Deploy to AWS Lambda (optional)
+
+# Deploys the triage handler as a Lambda function using GitHub OIDC, no stored AWS keys.
+# Manual only. Needs repo variables AWS_ROLE_ARN, AWS_REGION, LAMBDA_FUNCTION and a
+# DECIDER_URL env var on the function that points at a reachable Decider server.
+# See docs/DEPLOY.md.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build package for Lambda (linux x86_64, python 3.12)
+        run: |
+          pip install --target build/ . \
+            --platform manylinux2014_x86_64 --python-version 3.12 --only-binary=:all:
+          cp examples/lambda_handler.py build/
+          cd build && zip -qr ../function.zip .
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Update function code
+        run: |
+          aws lambda update-function-code \
+            --function-name "${{ vars.LAMBDA_FUNCTION }}" \
+            --zip-file fileb://function.zip
+          aws lambda wait function-updated --function-name "${{ vars.LAMBDA_FUNCTION }}"

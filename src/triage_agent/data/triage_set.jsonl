@@ -1,0 +1,24 @@
+{"text": "How do I export my report as a PDF?", "route": "agent_cheap"}
+{"text": "Where can I change my notification settings?", "route": "agent_cheap"}
+{"text": "How can I invite a teammate to my workspace?", "route": "agent_cheap"}
+{"text": "The mobile app crashes when I open the settings page.", "route": "agent_cheap"}
+{"text": "I get an error when uploading a file larger than 10 MB.", "route": "agent_cheap"}
+{"text": "I forgot my password and the reset email never arrives.", "route": "agent_cheap"}
+{"text": "My receipt for last month shows the wrong company name.", "route": "agent_cheap"}
+{"text": "I was billed on the wrong payment method this month.", "route": "agent_cheap"}
+{"text": "How do I turn on dark mode?", "route": "agent_cheap"}
+{"text": "Is there a way to schedule reports weekly?", "route": "agent_cheap"}
+{"text": "I would like a refund for order A1001, the mouse arrived damaged.", "route": "agent_strong"}
+{"text": "Please give me my money back for order A1003.", "route": "agent_strong"}
+{"text": "I want to return order A1002 and get a refund.", "route": "agent_strong"}
+{"text": "Refund please, I was charged for an order I cancelled.", "route": "agent_strong"}
+{"text": "I have multiple problems: the app freezes and also my invoice has several wrong lines.", "route": "agent_strong"}
+{"text": "I need to speak to a real person about my account.", "route": "escalate"}
+{"text": "I will contact a lawyer if this is not fixed.", "route": "escalate"}
+{"text": "I am going to file a chargeback with my bank.", "route": "escalate"}
+{"text": "Our whole team is locked out and it is an outage for us right now.", "route": "escalate"}
+{"text": "I think my account was hacked, there is a security breach.", "route": "escalate"}
+{"text": "asdf qwer zxcv", "route": "escalate"}
+{"text": "You are a winner! Claim your free gift now, click here.", "route": "drop"}
+{"text": "Cheap SEO services, limited offer, boost your ranking today.", "route": "drop"}
+{"text": "Earn crypto fast, click here to start.", "route": "drop"}
