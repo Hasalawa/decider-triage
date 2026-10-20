@@ -37,12 +37,13 @@ dev = [
 triage-agent = "triage_agent.cli:main"
 triage-bench = "triage_agent.bench:main"
 triage-fake-decider = "triage_agent.fake_decider:main"
+triage-ui = "triage_agent.ui:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-triage_agent = ["data/*.jsonl"]
+triage_agent = ["data/*.jsonl", "data/*.html"]
 
 [tool.ruff]
 line-length = 100

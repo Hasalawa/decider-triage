@@ -3,10 +3,10 @@
 ## 1. Push the repo (required for the hackathon: public repo)
 
 ```bash
-git remote add origin https://github.com/YOUR_USER/decider-triage.git
+git remote add origin https://github.com/Hasalawa/decider-triage.git
 git push -u origin main
 ```
-Replace `YOUR_USER` in `README.md` (CI badge and clone URL). `ci.yml` needs no secrets.
+`ci.yml` needs no secrets. Pushing to `main` starts it; check the Actions tab for a green tick.
 
 ## 2. `real-decider.yml` (optional, recommended before you write the article)
 
@@ -17,7 +17,7 @@ prints along with the hardware ("GitHub-hosted CPU runner").
 ## 3. `release.yml` (optional, PyPI)
 
 1. Rename the package in `pyproject.toml` if `decider-triage` is taken on PyPI.
-2. pypi.org -> Publishing -> add a pending publisher: repo `YOUR_USER/decider-triage`,
+2. pypi.org -> Publishing -> add a pending publisher: repo `Hasalawa/decider-triage`,
    workflow `release.yml`, environment `pypi`.
 3. GitHub repo -> Settings -> Environments -> create `pypi`.
 4. `git tag v0.1.0 && git push origin v0.1.0`.

@@ -1,6 +1,6 @@
 # decider-triage
 
-[![CI](https://github.com/YOUR_USER/decider-triage/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USER/decider-triage/actions/workflows/ci.yml)
+[![CI](https://github.com/Hasalawa/decider-triage/actions/workflows/ci.yml/badge.svg)](https://github.com/Hasalawa/decider-triage/actions/workflows/ci.yml)
 
 A customer-support agent where **Strands Decider 2B makes the routine decisions** and
 **Amazon Bedrock only writes text**. Built for the Agent Experience Hackathon: Strands Decider.
@@ -51,7 +51,7 @@ agent = Agent(model=..., tools=[issue_refund], interventions=[guard])
 ## Quick start
 
 ```bash
-git clone https://github.com/YOUR_USER/decider-triage && cd decider-triage
+git clone https://github.com/Hasalawa/decider-triage && cd decider-triage
 pip install -e ".[dev]"
 pip install strands-decider              # the real model (needs torch)
 
@@ -67,6 +67,14 @@ triage-bench                                                         # accuracy 
 Model IDs default to Claude Haiku 4.5 (cheap) and Sonnet 4.5 (strong) as Bedrock
 inference-profile IDs. Override with `TRIAGE_CHEAP_MODEL` / `TRIAGE_STRONG_MODEL` and make
 sure the models are enabled in your region.
+
+## Try it in a browser (no terminal typing)
+
+```bash
+python -m triage_agent.ui          # then open http://127.0.0.1:8088
+```
+Type a message and press Triage: you see the route, the numbers the Decider returned, and (if you
+tick the box, needs AWS) the agent reply and the grounding guard's verdicts. Good for the demo video.
 
 ## Run without downloading the model
 

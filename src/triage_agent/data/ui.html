@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decider Triage</title>
+<style>
+:root{--bg:#f2f4f5;--surface:#fff;--ink:#14212b;--muted:#52636f;--line:#d3dadf;--accent:#0b6e6e;
+ --drop:#5f6c76;--esc:#b4321f;--cheap:#1f5fbf;--strong:#8a5a00;--ok:#1b7f4b;
+ --font:system-ui,-apple-system,"Segoe UI",sans-serif;--mono:ui-monospace,Consolas,Menlo,monospace}
+@media (prefers-color-scheme: dark){:root{--bg:#0e161c;--surface:#16212a;--ink:#e6edf1;--muted:#9aabb6;--line:#27383f;
+ --accent:#4fc3bf;--drop:#a2b0ba;--esc:#ff8f7d;--cheap:#86b6ff;--strong:#f0b65a;--ok:#5ed19a;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--font);padding:28px 16px 60px}
+main{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+h1{margin:0;font-size:1.8rem;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:4px 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;min-width:0}
+textarea{width:100%;min-height:84px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;resize:vertical}
+button{font:inherit;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.go{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+@media (prefers-color-scheme: dark){button.go{color:#07201f}}
+button:disabled{opacity:.55;cursor:wait}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.label{font:600 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chip{--c:var(--drop);font:600 .85rem var(--mono);color:var(--c);border:1.5px solid var(--c);border-radius:999px;padding:3px 12px}
+.chip.escalate{--c:var(--esc)}.chip.agent_cheap{--c:var(--cheap)}.chip.agent_strong{--c:var(--strong)}
+.bar{display:grid;grid-template-columns:150px minmax(0,1fr) 54px;gap:10px;align-items:center;font-size:.9rem;margin-top:8px}
+.track{height:12px;background:var(--bg);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.fill{height:100%;background:var(--accent)}
+.num{font-family:var(--mono);text-align:right}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.good{color:var(--ok);font-weight:700}.bad{color:var(--esc);font-weight:700}
+.err{border-color:var(--esc);color:var(--esc)}
+.muted{color:var(--muted)}
+#out{display:flex;flex-direction:column;gap:16px}
+.tag{font:.8rem var(--mono);color:var(--muted)}
+@media (max-width:560px){.bar{grid-template-columns:110px minmax(0,1fr) 48px}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Decider Triage</h1>
+    <p class="sub">Type a customer message. Strands Decider 2B decides what happens to it.</p>
+    <p class="tag" id="status">checking decider...</p>
+  </header>
+
+  <div class="card">
+    <label class="label" for="msg">Customer message</label>
+    <textarea id="msg">I would like a refund for order A1001, the mouse arrived damaged.</textarea>
+    <div class="row" style="margin-top:10px">
+      <button class="go" id="go" type="button">Triage</button>
+      <label class="row" style="gap:6px"><input type="checkbox" id="llm"> Also run the Bedrock agent (needs AWS)</label>
+      <button id="reset" type="button">Reset demo data</button>
+    </div>
+    <div class="row" style="margin-top:12px" id="examples"></div>
+  </div>
+
+  <div id="out"></div>
+</main>
+
+<script>
+var EXAMPLES=[
+ "Earn crypto fast, click here to start.",
+ "I need to speak to a real person, I will file a chargeback.",
+ "How do I turn on dark mode?",
+ "I want a refund, the mouse I bought arrived broken.",
+ "Please refund order A1001, the mouse arrived broken.",
+ "Our whole team is locked out and it is an outage for us right now."
+];
+var $=function(id){return document.getElementById(id)};
+function esc(s){var d=document.createElement("div");d.textContent=String(s);return d.innerHTML}
+EXAMPLES.forEach(function(t){
+  var b=document.createElement("button");b.type="button";b.textContent=t.length>38?t.slice(0,36)+"…":t;b.title=t;
+  b.onclick=function(){$("msg").value=t};$("examples").appendChild(b);
+});
+fetch("/api/health").then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})}).then(function(x){
+  $("status").textContent=x.ok?("decider ready: "+x.j.model+(x.j.device?" on "+x.j.device:"")):("decider not reachable: "+(x.j.error||""));
+  if(!x.ok)$("status").style.color="var(--esc)";
+}).catch(function(){$("status").textContent="decider not reachable"});
+
+function bar(label,v,max){var p=Math.max(0,Math.min(1,v/max))*100;
+  return '<div class="bar"><span>'+label+'</span><div class="track"><div class="fill" style="width:'+p+'%"></div></div><span class="num">'+v.toFixed(2)+'</span></div>'}
+
+function show(r){
+  var t=r.triage,h='<div class="card"><div class="label">Decision</div><div class="row" style="margin:8px 0">'+
+   '<span class="chip '+t.route+'">'+t.route.toUpperCase()+'</span><span>'+esc(t.reason)+'</span></div>'+
+   '<div class="tag">decider time '+(t.latency_ms/1000).toFixed(1)+' s · LLM calls '+r.llm_calls+'</div>'+
+   '<div style="margin-top:10px"><div class="label">What the model said ('+esc(t.category)+')</div>'+
+   bar("category confidence",t.category_confidence,1)+bar("urgency (0 to 3)",t.urgency,3)+
+   bar("wants a human",t.wants_human,1)+bar("incident / outage",t.severe,1)+bar("complex",t.complex,1)+'</div></div>';
+  if(r.ran_llm||(r.llm_calls===0&&r.reply)){
+    h+='<div class="card"><div class="label">Agent reply</div><p style="margin:6px 0 0">'+esc(r.reply===null?"(no reply, message dropped)":r.reply)+'</p>'+
+      (r.ran_llm&&r.model_id?'<p class="tag">model '+esc(r.model_id)+'</p>':'')+'</div>';
+  }
+  if(r.guard.length){
+    h+='<div class="card"><div class="label">Grounding guard (Decider checked each tool call)</div><table><tr><th>tool</th><th>grounded</th><th>premature</th><th>result</th></tr>'+
+     r.guard.map(function(g){var good=g.action==="proceed"||g.action==="skipped";
+       return '<tr><td>'+esc(g.tool)+'</td><td>'+(g.grounded==null?"-":g.grounded.toFixed(2))+'</td><td>'+(g.premature==null?"-":g.premature.toFixed(2))+
+        '</td><td class="'+(good?"good":"bad")+'">'+esc(g.action)+'</td></tr>'}).join("")+'</table></div>';
+  }
+  h+='<div class="card"><div class="label">Demo backend</div><p class="muted" style="margin:6px 0 0">refunds issued: <b>'+r.refunds.length+
+     '</b> · human queue: <b>'+r.human_queue.length+'</b></p>'+(r.refunds.length?'<p class="tag">'+esc(JSON.stringify(r.refunds))+'</p>':'')+'</div>';
+  $("out").innerHTML=h;
+}
+$("go").onclick=function(){
+  var b=$("go");b.disabled=true;b.textContent="Thinking...";$("out").innerHTML='<div class="card muted">Asking the decider. On a laptop CPU this can take 15 seconds.</div>';
+  fetch("/api/handle",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({message:$("msg").value,use_llm:$("llm").checked})})
+   .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})
+   .then(function(x){if(x.ok)show(x.j);else $("out").innerHTML='<div class="card err"><b>Error</b><p style="margin:6px 0 0;overflow-wrap:anywhere">'+esc(x.j.error||"failed")+'</p></div>'})
+   .catch(function(e){$("out").innerHTML='<div class="card err">'+esc(e)+'</div>'})
+   .finally(function(){b.disabled=false;b.textContent="Triage"});
+};
+$("reset").onclick=function(){fetch("/api/reset",{method:"POST"}).then(function(){$("out").innerHTML=""})};
+</script>
+</body>
+</html>
