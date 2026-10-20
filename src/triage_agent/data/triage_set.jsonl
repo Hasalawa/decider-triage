@@ -1,24 +1,54 @@
-{"text": "How do I export my report as a PDF?", "route": "agent_cheap"}
-{"text": "Where can I change my notification settings?", "route": "agent_cheap"}
-{"text": "How can I invite a teammate to my workspace?", "route": "agent_cheap"}
-{"text": "The mobile app crashes when I open the settings page.", "route": "agent_cheap"}
-{"text": "I get an error when uploading a file larger than 10 MB.", "route": "agent_cheap"}
-{"text": "I forgot my password and the reset email never arrives.", "route": "agent_cheap"}
-{"text": "My receipt for last month shows the wrong company name.", "route": "agent_cheap"}
-{"text": "I was billed on the wrong payment method this month.", "route": "agent_cheap"}
-{"text": "How do I turn on dark mode?", "route": "agent_cheap"}
-{"text": "Is there a way to schedule reports weekly?", "route": "agent_cheap"}
-{"text": "I would like a refund for order A1001, the mouse arrived damaged.", "route": "agent_strong"}
-{"text": "Please give me my money back for order A1003.", "route": "agent_strong"}
-{"text": "I want to return order A1002 and get a refund.", "route": "agent_strong"}
-{"text": "Refund please, I was charged for an order I cancelled.", "route": "agent_strong"}
-{"text": "I have multiple problems: the app freezes and also my invoice has several wrong lines.", "route": "agent_strong"}
-{"text": "I need to speak to a real person about my account.", "route": "escalate"}
-{"text": "I will contact a lawyer if this is not fixed.", "route": "escalate"}
-{"text": "I am going to file a chargeback with my bank.", "route": "escalate"}
-{"text": "Our whole team is locked out and it is an outage for us right now.", "route": "escalate"}
-{"text": "I think my account was hacked, there is a security breach.", "route": "escalate"}
-{"text": "asdf qwer zxcv", "route": "escalate"}
-{"text": "You are a winner! Claim your free gift now, click here.", "route": "drop"}
-{"text": "Cheap SEO services, limited offer, boost your ranking today.", "route": "drop"}
-{"text": "Earn crypto fast, click here to start.", "route": "drop"}
+{"text": "How do I export my report as a PDF?", "route": "agent_cheap", "split": "dev"}
+{"text": "Where can I change my notification settings?", "route": "agent_cheap", "split": "dev"}
+{"text": "How can I invite a teammate to my workspace?", "route": "agent_cheap", "split": "dev"}
+{"text": "The mobile app crashes when I open the settings page.", "route": "agent_cheap", "split": "dev"}
+{"text": "I get an error when uploading a file larger than 10 MB.", "route": "agent_cheap", "split": "dev"}
+{"text": "I forgot my password and the reset email never arrives.", "route": "agent_cheap", "split": "dev"}
+{"text": "My receipt for last month shows the wrong company name.", "route": "agent_cheap", "split": "dev"}
+{"text": "I was billed on the wrong payment method this month.", "route": "agent_cheap", "split": "dev"}
+{"text": "How do I turn on dark mode?", "route": "agent_cheap", "split": "dev"}
+{"text": "Is there a way to schedule reports weekly?", "route": "agent_cheap", "split": "dev"}
+{"text": "I would like a refund for order A1001, the mouse arrived damaged.", "route": "agent_strong", "split": "dev"}
+{"text": "Please give me my money back for order A1003.", "route": "agent_strong", "split": "dev"}
+{"text": "I want to return order A1002 and get a refund.", "route": "agent_strong", "split": "dev"}
+{"text": "Refund please, I was charged for an order I cancelled.", "route": "agent_strong", "split": "dev"}
+{"text": "I have multiple problems: the app freezes and also my invoice has several wrong lines.", "route": "agent_strong", "split": "dev"}
+{"text": "I need to speak to a real person about my account.", "route": "escalate", "split": "dev"}
+{"text": "I will contact a lawyer if this is not fixed.", "route": "escalate", "split": "dev"}
+{"text": "I am going to file a chargeback with my bank.", "route": "escalate", "split": "dev"}
+{"text": "Our whole team is locked out and it is an outage for us right now.", "route": "escalate", "split": "dev"}
+{"text": "I think my account was hacked, there is a security breach.", "route": "escalate", "split": "dev"}
+{"text": "asdf qwer zxcv", "route": "escalate", "split": "dev"}
+{"text": "You are a winner! Claim your free gift now, click here.", "route": "drop", "split": "dev"}
+{"text": "Cheap SEO services, limited offer, boost your ranking today.", "route": "drop", "split": "dev"}
+{"text": "Earn crypto fast, click here to start.", "route": "drop", "split": "dev"}
+{"text": "How do I add a second email address to my account?", "route": "agent_cheap", "split": "test"}
+{"text": "The search bar does not show any results for short words.", "route": "agent_cheap", "split": "test"}
+{"text": "Can you tell me where to find my invoices?", "route": "agent_cheap", "split": "test"}
+{"text": "My two-factor code is not being accepted on login.", "route": "agent_cheap", "split": "test"}
+{"text": "The export button is greyed out, is that expected?", "route": "agent_cheap", "split": "test"}
+{"text": "I need help changing the language of the app.", "route": "agent_cheap", "split": "test"}
+{"text": "The dashboard loads very slowly on my phone.", "route": "agent_cheap", "split": "test"}
+{"text": "Where do I update my billing address?", "route": "agent_cheap", "split": "test"}
+{"text": "How do I delete a saved filter?", "route": "agent_cheap", "split": "test"}
+{"text": "I cannot sign in with my new password.", "route": "agent_cheap", "split": "test"}
+{"text": "Is there a keyboard shortcut for creating a new report?", "route": "agent_cheap", "split": "test"}
+{"text": "My profile picture will not upload.", "route": "agent_cheap", "split": "test"}
+{"text": "I was charged twice for order A1002, please refund the duplicate.", "route": "agent_strong", "split": "test"}
+{"text": "Please send my money back for order A1003, it never arrived.", "route": "agent_strong", "split": "test"}
+{"text": "I want to cancel order A1001 and get a full refund.", "route": "agent_strong", "split": "test"}
+{"text": "Refund me for the keyboard I ordered, it stopped working after two days.", "route": "agent_strong", "split": "test"}
+{"text": "Three things: my invoice total is wrong, the export is missing columns, and I also need to move my data to a new workspace.", "route": "agent_strong", "split": "test"}
+{"text": "Since last week the sync fails for several users and our reports show different totals on each device.", "route": "agent_strong", "split": "test"}
+{"text": "I need to merge two accounts, keep the history of both, and move the billing to the new one.", "route": "agent_strong", "split": "test"}
+{"text": "Let me talk to a manager, this is the third time I write.", "route": "escalate", "split": "test"}
+{"text": "I want to speak with a human agent now.", "route": "escalate", "split": "test"}
+{"text": "I am going to sue your company if this is not resolved today.", "route": "escalate", "split": "test"}
+{"text": "Our production system is down and customers cannot check out, this is an outage.", "route": "escalate", "split": "test"}
+{"text": "Someone logged into my account from another country, I think it was hacked.", "route": "escalate", "split": "test"}
+{"text": "We found a data leak that exposes customer emails.", "route": "escalate", "split": "test"}
+{"text": "qwerty uiop lkjh", "route": "escalate", "split": "test"}
+{"text": "Congratulations, you have been selected for a free gift card, click here to claim.", "route": "drop", "split": "test"}
+{"text": "Buy followers and likes cheap, limited offer for today only.", "route": "drop", "split": "test"}
+{"text": "Make money from home with crypto, click here now.", "route": "drop", "split": "test"}
+{"text": "We offer SEO services to rank your site first, reply for a quote.", "route": "drop", "split": "test"}

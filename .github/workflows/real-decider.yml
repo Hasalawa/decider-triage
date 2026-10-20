@@ -17,8 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - uses: actions/cache@v4
@@ -36,16 +36,22 @@ jobs:
           for i in $(seq 1 180); do curl -sf localhost:8099/health && exit 0; sleep 5; done
           echo "decider did not start"; tail -50 decider.log; exit 1
       - name: Benchmark
-        run: triage-bench --json | tee bench.json
+        run: |
+          triage-bench --split dev --json | tee bench-dev.json
+          triage-bench --split test --json | tee bench-test.json
       - name: Job summary
         run: |
           echo '### Real Decider 2B benchmark (CPU runner, slower than GPU)' >> "$GITHUB_STEP_SUMMARY"
           echo '```json' >> "$GITHUB_STEP_SUMMARY"
-          cat bench.json >> "$GITHUB_STEP_SUMMARY"
+          echo 'dev split:' >> "$GITHUB_STEP_SUMMARY"
+          cat bench-dev.json >> "$GITHUB_STEP_SUMMARY"
+          echo 'test split (held out):' >> "$GITHUB_STEP_SUMMARY"
+          cat bench-test.json >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v4
         with:
           name: real-decider-bench
           path: |
-            bench.json
+            bench-dev.json
+            bench-test.json
             decider.log

@@ -162,6 +162,8 @@ class DeciderClient:
         timeout: float | None = None,
         http: httpx.Client | None = None,
     ) -> None:
+        # CPU inference can take many seconds, especially the first call, so the default is
+        # generous. Set STRANDS_DECIDER_TIMEOUT (seconds) to change it, e.g. 10 on a GPU.
         if timeout is None:
             timeout = float(os.environ.get("STRANDS_DECIDER_TIMEOUT", "120"))
         base = (base_url or os.environ.get("STRANDS_DECIDER_URL") or DEFAULT_URL).rstrip("/")

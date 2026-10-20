@@ -1,6 +1,6 @@
 # decider-triage
 
-[![CI](https://github.com/Hasalawa/decider-triage/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USER/decider-triage/actions/workflows/ci.yml)
+[![CI](https://github.com/YOUR_USER/decider-triage/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USER/decider-triage/actions/workflows/ci.yml)
 
 A customer-support agent where **Strands Decider 2B makes the routine decisions** and
 **Amazon Bedrock only writes text**. Built for the Agent Experience Hackathon: Strands Decider.

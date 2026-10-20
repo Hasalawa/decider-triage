@@ -51,6 +51,11 @@ TRIAGE_QUESTIONS = {
     "wants_human": Noul(
         "Does the customer ask for a human, or threaten legal action or a chargeback?"
     ),
+    "severe": Noul(
+        "Does this describe a security incident, an outage, or data loss?",
+        true="account compromise, a breach, a data leak, or a system that is down",
+        false="an ordinary request or an individual inconvenience",
+    ),
     "complex": Noul("Does resolving this need several steps, several systems, or a judgment call?"),
 }
 
@@ -60,6 +65,7 @@ class TriagePolicy:
     """Every knob here is a business decision, not something the model learned."""
 
     wants_human_min: float = 0.5  # P(yes) at or above this -> human
+    severe_min: float = 0.5  # P(yes) at or above this -> human
     critical_urgency_min: float = 2.5  # expected urgency level (0..3) at or above -> human
     spam_min_confidence: float = 0.8  # only drop spam when the model is this sure
     category_min_confidence: float = 0.5  # below this we do not guess, a human decides
@@ -75,6 +81,7 @@ class TriageDecision:
     category_confidence: float
     urgency: float
     wants_human: float
+    severe: float
     complex: float
     latency_ms: float
 
@@ -90,12 +97,15 @@ def decide_route(
     category_confidence: float,
     urgency: float,
     wants_human: float,
+    severe: float,
     complex_: float,
     policy: TriagePolicy,
 ) -> tuple[Route, str]:
     """Pure function: model numbers in, route out. Order matters, first match wins."""
     if wants_human >= policy.wants_human_min:
         return Route.ESCALATE, "customer asked for a human or threatened escalation"
+    if severe >= policy.severe_min:
+        return Route.ESCALATE, "security incident or outage"
     if urgency >= policy.critical_urgency_min:
         return Route.ESCALATE, "critical urgency"
     if category == "spam" and category_confidence >= policy.spam_min_confidence:
@@ -130,6 +140,7 @@ def triage(
             category_confidence=0.0,
             urgency=0.0,
             wants_human=0.0,
+            severe=0.0,
             complex=0.0,
             latency_ms=0.0,
         )
@@ -137,12 +148,14 @@ def triage(
     category = d.choice("category")
     urgency = d.score("urgency").value
     wants_human = d.noul("wants_human")
+    severe = d.noul("severe")
     complex_ = d.noul("complex")
     route, reason = decide_route(
         category=category.label,
         category_confidence=category.confidence,
         urgency=urgency,
         wants_human=wants_human,
+        severe=severe,
         complex_=complex_,
         policy=policy,
     )
@@ -153,6 +166,7 @@ def triage(
         category_confidence=category.confidence,
         urgency=urgency,
         wants_human=wants_human,
+        severe=severe,
         complex=complex_,
         latency_ms=d.latency_ms,
     )

@@ -63,9 +63,10 @@ class BenchReport:
         }
 
 
-def load_set() -> list[dict]:
+def load_set(split: str = "all") -> list[dict]:
     text = resources.files("triage_agent.data").joinpath("triage_set.jsonl").read_text("utf-8")
-    return [json.loads(line) for line in text.splitlines() if line.strip()]
+    rows = [json.loads(line) for line in text.splitlines() if line.strip()]
+    return rows if split == "all" else [r for r in rows if r.get("split") == split]
 
 
 def _percentile(values: list[float], pct: float) -> float:
@@ -111,6 +112,7 @@ def run_bench(
                         "category_conf": round(d.category_confidence, 2),
                         "urgency": round(d.urgency, 2),
                         "wants_human": round(d.wants_human, 2),
+                        "severe": round(d.severe, 2),
                         "complex": round(d.complex, 2),
                     },
                 }
@@ -141,13 +143,19 @@ def main() -> None:
     parser.add_argument("--price-cheap", type=float, default=0.001, help="USD per 1K tokens")
     parser.add_argument("--price-strong", type=float, default=0.010, help="USD per 1K tokens")
     parser.add_argument("--json", action="store_true", help="print JSON only")
+    parser.add_argument(
+        "--split",
+        choices=["dev", "test", "all"],
+        default="all",
+        help="dev = the 24 messages used while building the policy, test = 30 held-out",
+    )
     parser.add_argument("--verbose", action="store_true", help="show the model numbers per miss")
     parser.add_argument("--min-accuracy", type=float, default=0.0, help="exit 1 below this")
     args = parser.parse_args()
 
     report = run_bench(
         DeciderClient(args.url),
-        load_set(),
+        load_set(args.split),
         price_cheap=args.price_cheap,
         price_strong=args.price_strong,
     )

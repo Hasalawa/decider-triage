@@ -16,8 +16,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
@@ -33,8 +33,8 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -47,8 +47,8 @@ jobs:
           triage-fake-decider --port 8099 &
           for i in $(seq 1 20); do curl -sf localhost:8099/health && break; sleep 0.5; done
           triage-agent --triage-only "How do I turn on dark mode?"
-          triage-bench --min-accuracy 0.9
-      - uses: actions/upload-artifact@v7
+          triage-bench --split dev --min-accuracy 0.9
+      - uses: actions/upload-artifact@v4
         if: matrix.python-version == '3.12'
         with:
           name: coverage-xml
@@ -58,14 +58,14 @@ jobs:
     needs: [lint, test]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install build twine
       - run: python -m build
       - run: twine check dist/*
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/

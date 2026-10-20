@@ -12,6 +12,7 @@ def route(**over):
         category_confidence=0.9,
         urgency=0.5,
         wants_human=0.1,
+        severe=0.1,
         complex_=0.1,
         policy=P,
     )
@@ -25,6 +26,11 @@ def test_routine_goes_cheap():
 
 def test_human_request_wins_over_everything():
     assert route(wants_human=0.9, category="spam") is Route.ESCALATE
+
+
+def test_severe_incident_escalates():
+    assert route(severe=0.9) is Route.ESCALATE
+    assert route(severe=0.2) is Route.AGENT_CHEAP
 
 
 def test_critical_urgency_escalates():
@@ -53,6 +59,7 @@ def test_thresholds_are_policy_not_model():
             category_confidence=0.9,
             urgency=0.1,
             wants_human=0.1,
+            severe=0.1,
             complex_=0.1,
             policy=strict,
         )[0]

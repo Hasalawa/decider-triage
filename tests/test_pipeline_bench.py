@@ -42,8 +42,8 @@ def test_backend_refund_rules():
 
 
 def test_bench_on_stub_reports_consistent_numbers(decider):
-    r = run_bench(decider, load_set(), price_cheap=0.001, price_strong=0.01)
-    assert r.total == len(load_set()) >= 20
+    r = run_bench(decider, load_set("dev"), price_cheap=0.001, price_strong=0.01)
+    assert r.total == len(load_set("dev")) == 24
     assert r.model_name == "fake-keyword-decider"
     assert r.llm_calls < r.total  # drop and escalate never reach an LLM
     assert r.cost_routed < r.cost_always_strong

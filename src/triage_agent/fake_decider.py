@@ -28,6 +28,7 @@ _HUMAN = re.compile(
 _URGENT = re.compile(r"\b(urgent|asap|immediately|right now|outage|down for)\b", re.I)
 _CRITICAL = re.compile(r"\b(outage|security breach|hacked|data leak)\b", re.I)
 _COMPLEX = re.compile(r"\b(and also|multiple|several|both|three|four|since last)\b", re.I)
+_SEVERE = re.compile(r"\\b(outage|hacked|breach|data leak|is down|logged into my account)\\b", re.I)
 _ORDER_ID = re.compile(r"\b[A-Z]\d{4}\b")
 
 
@@ -55,6 +56,8 @@ def _noul(question: str, state: str) -> float:
     q = question.lower()
     if "ask for a human" in q:
         return 0.93 if _HUMAN.search(state) else 0.05
+    if "security incident" in q:
+        return 0.9 if _SEVERE.search(state) else 0.05
     if "several steps" in q:
         return 0.85 if _COMPLEX.search(state) else 0.12
     if "grounded" in q:
