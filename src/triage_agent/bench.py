@@ -101,7 +101,20 @@ def run_bench(
         if d.route.value == ex["route"]:
             correct += 1
         else:
-            mistakes.append({"text": ex["text"], "gold": ex["route"], "got": d.route.value})
+            mistakes.append(
+                {
+                    "text": ex["text"],
+                    "gold": ex["route"],
+                    "got": d.route.value,
+                    "numbers": {
+                        "category": d.category,
+                        "category_conf": round(d.category_confidence, 2),
+                        "urgency": round(d.urgency, 2),
+                        "wants_human": round(d.wants_human, 2),
+                        "complex": round(d.complex, 2),
+                    },
+                }
+            )
         if d.route is Route.AGENT_CHEAP:
             llm_calls += 1
             cost_routed += price_cheap * TOKENS_PER_REQUEST / 1000
@@ -128,6 +141,7 @@ def main() -> None:
     parser.add_argument("--price-cheap", type=float, default=0.001, help="USD per 1K tokens")
     parser.add_argument("--price-strong", type=float, default=0.010, help="USD per 1K tokens")
     parser.add_argument("--json", action="store_true", help="print JSON only")
+    parser.add_argument("--verbose", action="store_true", help="show the model numbers per miss")
     parser.add_argument("--min-accuracy", type=float, default=0.0, help="exit 1 below this")
     args = parser.parse_args()
 
@@ -151,6 +165,8 @@ def main() -> None:
         )
         for m in r.mistakes:
             print(f"  MISS gold={m['gold']:<12} got={m['got']:<12} {m['text']!r}")
+            if args.verbose:
+                print(f"       {m['numbers']}")
     if report.accuracy < args.min_accuracy:
         raise SystemExit(1)
 
