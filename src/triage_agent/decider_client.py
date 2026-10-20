@@ -159,9 +159,11 @@ class DeciderClient:
         base_url: str | None = None,
         *,
         model: str | None = None,
-        timeout: float = 10.0,
+        timeout: float | None = None,
         http: httpx.Client | None = None,
     ) -> None:
+        if timeout is None:
+            timeout = float(os.environ.get("STRANDS_DECIDER_TIMEOUT", "120"))
         base = (base_url or os.environ.get("STRANDS_DECIDER_URL") or DEFAULT_URL).rstrip("/")
         if base.endswith(ENDPOINT):
             base = base[: -len(ENDPOINT)]
