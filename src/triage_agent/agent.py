@@ -11,8 +11,12 @@ from .decision_pattern import GroundingGuard
 from .tools import ALL_TOOLS, GUARDED_TOOLS
 
 # Override with env vars; check that these model IDs are enabled in your Bedrock region.
-CHEAP_MODEL = os.environ.get("TRIAGE_CHEAP_MODEL", "us.anthropic.claude-haiku-4-5-20251001-v1:0")
-STRONG_MODEL = os.environ.get("TRIAGE_STRONG_MODEL", "us.anthropic.claude-sonnet-4-5-20250929-v1:0")
+CHEAP_MODEL = os.environ.get(
+    "TRIAGE_CHEAP_MODEL", "global.anthropic.claude-haiku-4-5-20251001-v1:0"
+)
+STRONG_MODEL = os.environ.get(
+    "TRIAGE_STRONG_MODEL", "global.anthropic.claude-sonnet-4-5-20250929-v1:0"
+)
 
 SYSTEM_PROMPT = """You are a customer support agent for an online hardware shop.
 Use the tools to look up orders, issue refunds and create tickets.

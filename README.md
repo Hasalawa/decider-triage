@@ -1,6 +1,6 @@
 # decider-triage
 
-[![CI](https://github.com/Hasalawa/decider-triage/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USER/decider-triage/actions/workflows/ci.yml)
+[![CI](https://github.com/Hasalawa/decider-triage/actions/workflows/ci.yml/badge.svg)](https://github.com/Hasalawa/decider-triage/actions/workflows/ci.yml)
 
 A customer-support agent where **Strands Decider 2B makes the routine decisions** and
 **Amazon Bedrock only writes text**. Built for the Agent Experience Hackathon: Strands Decider.
@@ -65,7 +65,8 @@ triage-bench                                                         # accuracy 
 ```
 
 Model IDs default to Claude Haiku 4.5 (cheap) and Sonnet 4.5 (strong) as Bedrock
-inference-profile IDs. Override with `TRIAGE_CHEAP_MODEL` / `TRIAGE_STRONG_MODEL` and make
+inference-profile IDs. Run `python -m triage_agent.models` to list the Claude models your account can use in your region and
+get the two `TRIAGE_*_MODEL` lines to paste. Override with `TRIAGE_CHEAP_MODEL` / `TRIAGE_STRONG_MODEL` and make
 sure the models are enabled in your region.
 
 ## Try it in a browser (no terminal typing)
