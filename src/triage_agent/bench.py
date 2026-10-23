@@ -19,7 +19,7 @@ import statistics
 from dataclasses import dataclass
 from importlib import resources
 
-from .decider_client import DeciderClient
+from .decider_client import DeciderClient, DeciderError
 from .triage import Route, TriagePolicy, triage
 
 TOKENS_PER_REQUEST = 600  # rough size of one agent conversation, adjust to your traffic
@@ -72,9 +72,14 @@ def load_set(split: str = "all") -> list[dict]:
 def _percentile(values: list[float], pct: float) -> float:
     if not values:
         return 0.0
+    if not 0 <= pct <= 100:
+        raise ValueError("pct must be between 0 and 100")
     ordered = sorted(values)
-    index = min(len(ordered) - 1, round(pct / 100 * (len(ordered) - 1)))
-    return ordered[index]
+    position = pct / 100 * (len(ordered) - 1)
+    lower = int(position)
+    upper = min(lower + 1, len(ordered) - 1)
+    fraction = position - lower
+    return ordered[lower] + (ordered[upper] - ordered[lower]) * fraction
 
 
 def run_bench(
@@ -87,7 +92,7 @@ def run_bench(
 ) -> BenchReport:
     try:
         model_name = str(decider.health().get("model", "unknown"))
-    except Exception:  # health is optional, do not fail the benchmark over it
+    except DeciderError:  # health is optional, do not fail the benchmark over it
         model_name = "unknown"
 
     triage(decider, "warm up: how do I reset my password?", policy)  # first call pays compile cost
