@@ -15,6 +15,8 @@
 
 *Built for the Agent Experience Hackathon: Strands Decider.*
 
+🌐 **[Project page](https://hasalawa.github.io/decider-triage/)**
+
 </div>
 
 ---
@@ -229,6 +231,7 @@ flowchart LR
 | `real-decider.yml` | manual, weekly | serves the real Decider 2B on CPU and runs `triage-bench`, writes the JSON to the job summary |
 | `release.yml` | tag `v*` | checks tag == package version, tests, builds, publishes to PyPI via Trusted Publishing, creates a GitHub release |
 | `deploy-lambda.yml` | manual | optional, builds a Lambda zip and deploys it with GitHub OIDC |
+| `pages.yml` | push to `site/` | publishes the project page to GitHub Pages |
 | `dependabot.yml` | weekly | pip and Actions updates |
 
 One-time setup for each: [docs/DEPLOY.md](docs/DEPLOY.md).
