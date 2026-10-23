@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>decider-triage</title>
+<meta name="description" content="A support agent where Strands Decider 2B makes the routine decisions and Amazon Bedrock only writes text.">
+<style>
+:root{--bg:#0f1720;--card:#16212c;--ink:#e6edf3;--mute:#93a4b5;--accent:#4fb8b0;--line:#25323f}
+@media (prefers-color-scheme:light){:root{--bg:#f6f8fa;--card:#fff;--ink:#1f2933;--mute:#5b6b7b;--accent:#1c8d85;--line:#d8e0e8}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:920px;margin:0 auto;padding:40px 16px 64px}
+h1{font-size:2.2rem;margin:0 0 6px}h2{margin:40px 0 12px;font-size:1.3rem}
+.sub{color:var(--mute);margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin:12px 0;overflow-x:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.pill{display:inline-block;border:1px solid var(--accent);color:var(--accent);border-radius:99px;padding:2px 10px;margin:2px 4px 2px 0;font-size:.85rem}
+a{color:var(--accent)}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:8px;text-align:left;font-size:.95rem}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+code,pre{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9rem}pre{margin:0;white-space:pre-wrap}
+.btn{display:inline-block;background:var(--accent);color:#06201e;padding:9px 16px;border-radius:8px;text-decoration:none;font-weight:600;margin-right:8px}
+</style>
+</head>
+<body>
+<main>
+<h1>decider-triage</h1>
+<p class="sub">A support agent where a 2B decision model makes the calls and the LLM only writes text.</p>
+<span class="pill">#strands-decider-2b</span><span class="pill">#policy</span>
+<p style="margin-top:16px"><a class="btn" href="https://github.com/Hasalawa/decider-triage">View on GitHub</a></p>
+
+<div class="grid">
+<div class="card"><b>Drop spam early</b><br>No LLM call for messages a human never needs to see.</div>
+<div class="card"><b>Policy in code</b><br>The model returns numbers. Thresholds are plain Python you can read and test.</div>
+<div class="card"><b>Grounded tool calls</b><br>A reusable guard stops the agent guessing an order ID before it refunds.</div>
+</div>
+
+<h2>How a message flows</h2>
+<div class="card"><pre class="mermaid">
+flowchart TD
+    M([Customer message]) --> T{{"Decider 2B: 1 call, 5 questions"}}
+    T --> P["TriagePolicy (plain Python thresholds)"]
+    P -->|spam, confident| D["DROP: 0 LLM calls"]
+    P -->|human asked / outage / critical / unsure| E["ESCALATE: human queue"]
+    P -->|routine| C["AGENT_CHEAP: small Bedrock model"]
+    P -->|money or complex| S["AGENT_STRONG: stronger Bedrock model"]
+    C --> G
+    S --> G
+    G{{"GroundingGuard (Decider 2B) before issue_refund"}}
+    G -->|grounded| OK["Proceed"]
+    G -->|guessed| GU["Guide: ask the customer for the order ID"]
+    G -->|decider down| DN["Deny"]
+</pre></div>
+
+<h2>Real results (laptop CPU, real Decider 2B)</h2>
+<div class="card">
+<table>
+<tr><th>Split</th><th>Correct</th><th style="width:40%"></th></tr>
+<tr><td>Dev (24 messages, before the "severe" question)</td><td>19 / 24 &middot; 79.2%</td><td><div class="bar"><i style="width:79.2%"></i></div></td></tr>
+<tr><td>Held-out test (30 messages, run once)</td><td>24 / 30 &middot; 80.0%</td><td><div class="bar"><i style="width:80%"></i></div></td></tr>
+</table>
+<p class="sub" style="margin-bottom:0">20 LLM calls with routing vs 30 if everything went to the strong model. Decider p50 is about 14 s on my laptop CPU; official numbers are about 115 ms on an RTX 3090. Spam dropping is weak (1 of 4), the policy prefers a human over a wrong drop.</p>
+</div>
+
+<h2>Reuse the pattern</h2>
+<div class="card"><pre>from triage_agent.decider_client import DeciderClient
+from triage_agent.decision_pattern import GroundingGuard
+
+guard = GroundingGuard(DeciderClient(), tools={"issue_refund"})
+agent = Agent(model=..., tools=[issue_refund], interventions=[guard])</pre></div>
+
+<p class="sub">Built for the Agent Experience Hackathon: Strands Decider. MIT License.</p>
+</main>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs";
+const dark = !window.matchMedia("(prefers-color-scheme: light)").matches;
+mermaid.initialize({startOnLoad:true, theme: dark ? "dark" : "default"});
+</script>
+</body>
+</html>
