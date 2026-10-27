@@ -48,7 +48,7 @@ jobs:
           for i in $(seq 1 20); do curl -sf localhost:8099/health && break; sleep 0.5; done
           triage-agent --triage-only "How do I turn on dark mode?"
           triage-bench --split dev --min-accuracy 0.9
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: matrix.python-version == '3.12'
         with:
           name: coverage-xml
@@ -65,7 +65,7 @@ jobs:
       - run: pip install build twine
       - run: python -m build
       - run: twine check dist/*
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
